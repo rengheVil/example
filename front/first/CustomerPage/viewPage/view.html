@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Rental Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="ji.css">
+
+<style>
+    h1, h2 {
+    color: #333;
+}
+#carList {
+    margin-bottom: 20px;
+}
+
+</style>
+</head>
+<body>
+    <div id="dashboard">
+      
+        <aside class="sidebar">
+            <ul> 
+                <h1>Car Rental Dashboard</h1> <br><br><br>
+                <li><a href="#"><i class="fas fa-car"></i> Cars</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
+                <li><a href="#"><i class="fas fa-file-invoice"></i> Rentals</a></li>
+                <li><a href="#"><i class="fas fa-cogs"></i> Settings</a></li>
+            </ul>
+        </aside>
+        <!-- <main class="content">
+            <h2>Overview</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Total Cars</h3>
+                    <p>50</p>
+                </div>
+                <div class="card">
+                    <h3>Total Rentals</h3>
+                    <p>25</p>
+                </div>
+                <div class="card">
+                    <h3>Available Cars</h3>
+                    <p>15</p>
+                </div>
+                <div class="card">
+                    <h3>Customers</h3>
+                    <p>100</p>
+                </div>
+            </div>
+        </main> -->
+
+        <!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Car Rental</title>
+</head>
+<body> -->
+    <h1>Car Rental Details</h1>
+    <div id="carList"></div>
+    <h2>Add Car</h2>
+    <form id="carForm">
+        <input type="text" id="make" placeholder="Make" required>
+        <input type="text" id="model" placeholder="Model" required>
+        <input type="number" id="year" placeholder="Year" required>
+        <input type="number" id="price" placeholder="Price" required>
+        <button type="submit">Add Car</button>
+    </form>
+    <script src="script.js"></script>
+<!-- </body>
+</html> -->
+
+
+
+
+    </div>
+</body>
+<script>
+    const carList = document.getElementById('carList');
+const carForm = document.getElementById('carForm');
+
+// Function to fetch car details
+const fetchCars = async () => {
+    const response = await fetch('/api/cars');
+    const cars = await response.json();
+    carList.innerHTML = cars.map(car => `
+        <div>
+            <p>${car.make} ${car.model} (${car.year}) - $${car.price}</p>
+            <button onclick="deleteCar(${car.id})">Delete</button>
+        </div>
+    `).join('');
+};
+
+// Function to add a car
+carForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newCar = {
+        make: document.getElementById('make').value,
+        model: document.getElementById('model').value,
+        year: parseInt(document.getElementById('year').value),
+        price: parseFloat(document.getElementById('price').value)
+    };
+
+    await fetch('/api/cars', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newCar)
+    });
+
+    fetchCars(); // Refresh car list
+});
+
+// Function to delete a car
+const deleteCar = async (id) => {
+    await fetch(`/api/cars/${id}`, {
+        method: 'DELETE'
+    });
+    fetchCars(); // Refresh car list
+};
+
+fetchCars(); // Initial load of cars
+
+</script>
+</html>
